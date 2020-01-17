@@ -1,9 +1,11 @@
 require "sinatra"
-require "pp"
 
 get '/*' do
-  puts request.env.to_s
-  return "<pre>#{pp request.env}</pre>"
+  out = request.env
+  # try and limit to HTTP headers
+  out = out.delete_if {|k,v| k != k.upcase }
+  puts out
+  return out.to_s
 end
 
 post '/*' do
