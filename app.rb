@@ -1,14 +1,15 @@
-require "sinatra"
+# app.rb
+require 'sinatra'
+require 'sinatra/reloader'
+set :bind, '::'
 
 get '/*' do
-  out = request.env
-  # try and limit to HTTP headers
-  out = out.delete_if {|k,v| k != k.upcase }
-  puts out
-  return out.to_s
-end
+  response = "VERSION_NAME: #{ENV['VERSION_NAME']  || 'nil'}"
+  response += "<br /><br />"
+  response += "headers: #{request.env.select { |k,v| k.start_with?('HTTP_') }.map { |k,v| [k.sub(/^HTTP_/, '').downcase, v] }.to_json}"
+  response += "<br /><br />"
+  response += "params: #{params.to_json}\n"
 
-post '/*' do
-  puts request.env.to_s
-  return request.env.to_s
+  puts response
+  response
 end
